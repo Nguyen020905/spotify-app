@@ -1,6 +1,7 @@
 // App.jsx
 import { useEffect, useState } from "react";
 import "./App.css";
+import TopArtist from "./TopArtist.jsx";
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
 const RESPONSE_TYPE = "token";
 const SCOPES = ["user-top-read"];
@@ -54,6 +55,7 @@ function App() {
             Logout
           </button>
           <p>You are logged in!</p>
+          <TopArtist token={token} />
         </>
       )}
     </div>
@@ -61,3 +63,4 @@ function App() {
 }
 
 export default App;
+
