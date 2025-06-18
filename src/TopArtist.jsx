@@ -10,15 +10,23 @@ const TopArtist = ({ token }) => {
 
     const fetchTopArtists = async () => {
       try {
-        const res = await fetch("https://api.spotify.com/v1/me/top/artists?limit=10", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        console.log("Token being used:", token);
+        const res = await fetch(
+          "https://api.spotify.com/v1/me/top/artists?limit=10",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!res.ok) throw new Error("Failed to fetch top artists");
 
         const data = await res.json();
+        console.log("Full API response:", data); // Debug: log the full response
+        console.log("Data items:", data.items); // Debug: log the items array
+        console.log("Items length:", data.items?.length); // Debug: log the length
+        
         setArtists(data.items || []);
       } catch (err) {
         setError(err.message);
