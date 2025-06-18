@@ -44,6 +44,8 @@ function App() {
     alert(`Current localStorage token: ${storedToken || 'null'}`);
   };
 
+  const loginUrl = `${AUTH_ENDPOINT}?client_id=${import.meta.env.VITE_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${SCOPES.join("%20")}&response_type=${RESPONSE_TYPE}`;
+
   return (
     <div className="center-container">
       <h1>Spotify App</h1>
@@ -52,11 +54,7 @@ function App() {
         <>
           <a
             className="btn"
-            href={`${AUTH_ENDPOINT}?client_id=${
-              import.meta.env.VITE_CLIENT_ID
-            }&redirect_uri=${REDIRECT_URI}&scope=${SCOPES.join(
-              "%20"
-            )}&response_type=${RESPONSE_TYPE}`}
+            href={loginUrl}
           >
             Login to Spotify
           </a>
