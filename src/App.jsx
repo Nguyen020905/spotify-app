@@ -45,6 +45,8 @@ function App() {
   };
 
   const loginUrl = `${AUTH_ENDPOINT}?client_id=${import.meta.env.VITE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES.join("%20")}&response_type=${RESPONSE_TYPE}`;
+  
+  console.log("Login URL:", loginUrl); // Debug: see the actual URL being generated
 
   return (
     <div className="center-container">
