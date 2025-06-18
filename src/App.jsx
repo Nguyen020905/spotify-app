@@ -26,12 +26,22 @@ function App() {
       window.localStorage.setItem("token", token);
     }
 
+    console.log("Token from localStorage:", token); // Debug: log the token
+    console.log("Hash from URL:", hash); // Debug: log the hash
     setToken(token);
   }, []);
+
+  console.log("Current token state:", token); // Debug: log the current token state
 
   const logOut = () => {
     setToken("");
     window.localStorage.removeItem("token");
+  };
+
+  const checkLocalStorage = () => {
+    const storedToken = window.localStorage.getItem("token");
+    console.log("Current localStorage token:", storedToken);
+    alert(`Current localStorage token: ${storedToken || 'null'}`);
   };
 
   return (
@@ -39,16 +49,21 @@ function App() {
       <h1>Spotify App</h1>
 
       {!token ? (
-        <a
-          className="btn"
-          href={`${AUTH_ENDPOINT}?client_id=${
-            import.meta.env.VITE_CLIENT_ID
-          }&redirect_uri=${REDIRECT_URI}&scope=${SCOPES.join(
-            "%20"
-          )}&response_type=${RESPONSE_TYPE}`}
-        >
-          Login to Spotify
-        </a>
+        <>
+          <a
+            className="btn"
+            href={`${AUTH_ENDPOINT}?client_id=${
+              import.meta.env.VITE_CLIENT_ID
+            }&redirect_uri=${REDIRECT_URI}&scope=${SCOPES.join(
+              "%20"
+            )}&response_type=${RESPONSE_TYPE}`}
+          >
+            Login to Spotify
+          </a>
+          <button onClick={checkLocalStorage} style={{marginTop: '10px'}}>
+            Check localStorage
+          </button>
+        </>
       ) : (
         <>
           <button onClick={logOut} className="bnt">
@@ -56,6 +71,7 @@ function App() {
           </button>
           <p>You are logged in!</p>
           <TopArtist token={token} />
+          {console.log("Token being passed to TopArtist:", token)}
         </>
       )}
     </div>
