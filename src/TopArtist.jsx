@@ -1,52 +1,49 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+
 const TopArtist = ({ token }) => {
-  const [tracks, setTracks] = useState([]); /* create an array of top song */
+  const [artists, setArtists] = useState([]);
+  const [loading, setLoading] = useState(true); // Optional: show loading
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     if (!token) return;
 
-    const fetchTopTracks = async () => {
+    const fetchTopArtists = async () => {
       try {
-        const response = await fetch(
-          "https://api.spotify.com/v1/me/top/tracks?limit=10",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await fetch("https://api.spotify.com/v1/me/top/artists?limit=10", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        const data = await response.json();
-        setTracks(data.items);
-      } catch (error) {
-        console.error("Error fetching top tracks:", error);
+        if (!res.ok) throw new Error("Failed to fetch top artists");
+
+        const data = await res.json();
+        setArtists(data.items || []);
+      } catch (err) {
+        setError(err.message);
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchTopTracks();
+    fetchTopArtists();
   }, [token]);
 
   return (
-    <div className="top-tracks">
-      <h2>Your Top 10 Tracks</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Track Name</th>
-            <th>Artist(s)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tracks.map((track, index) => (
-            <tr key={track.id}>
-              <td>{index + 1}</td>
-              <td>{track.name}</td>
-              <td>{track.artists.map((artist) => artist.name).join(", ")}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div>
+      <h2>Your Top Artists</h2>
+      {loading && <p>Loading...</p>}
+      {error && <p>Error: {error}</p>}
+      {artists.length === 0 && !loading && <p>No top artists found.</p>}
+      <ul>
+        {artists.map((artist, index) => (
+          <li key={artist.id}>
+            {index + 1}. {artist.name}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
