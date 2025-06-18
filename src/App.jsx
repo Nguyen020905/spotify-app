@@ -1,7 +1,7 @@
 // App.jsx
 import { useEffect, useState } from "react";
 import "./App.css";
-import TopArtist from "https://accounts.spotify.com/authorize./TopArtist.jsx";
+import TopArtist from "./TopArtist.jsx";
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
 const RESPONSE_TYPE = "token";
 const SCOPES = ["user-top-read"];
