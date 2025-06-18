@@ -1,11 +1,12 @@
 // App.jsx
 import { useEffect, useState } from "react";
 import "./App.css";
-import TopArtist from "./TopArtist.jsx";
+import TopArtist from "https://accounts.spotify.com/authorize./TopArtist.jsx";
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
 const RESPONSE_TYPE = "token";
 const SCOPES = ["user-top-read"];
 const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
 console.log("Environment variables:");
 console.log("VITE_CLIENT_ID:", import.meta.env.VITE_CLIENT_ID);
@@ -48,7 +49,7 @@ function App() {
     alert(`Current localStorage token: ${storedToken || 'null'}`);
   };
 
-  const loginUrl = `${AUTH_ENDPOINT}?client_id=${import.meta.env.VITE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES.join("%20")}&response_type=${RESPONSE_TYPE}`.replace(/\s+/g, '');
+  const loginUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES.join("%20")}&response_type=${RESPONSE_TYPE}`.replace(/\s+/g, '');
   
   console.log("Login URL:", loginUrl); // Debug: see the actual URL being generated
 
