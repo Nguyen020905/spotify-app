@@ -11,6 +11,7 @@ const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 console.log("Environment variables:");
 console.log("VITE_CLIENT_ID:", import.meta.env.VITE_CLIENT_ID);
 console.log("VITE_REDIRECT_URI:", import.meta.env.VITE_REDIRECT_URI);
+console.log("Client ID:", CLIENT_ID);
 
 function App() {
   const [token, setToken] = useState("");
