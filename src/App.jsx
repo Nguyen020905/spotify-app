@@ -17,20 +17,23 @@ function App() {
   const [token, setToken] = useState("");
   useEffect(() => {
   const hash = window.location.hash;
-  let token = window.localStorage.getItem("token");
+  let storedToken = window.localStorage.getItem("token");
 
-  if (!token && hash) {
+  if (!storedToken && hash) {
     const extractedToken = new URLSearchParams(hash.substring(1)).get("access_token");
     if (extractedToken) {
       window.location.hash = "";
       window.localStorage.setItem("token", extractedToken);
-      setToken(extractedToken); // ✅ Only set after it's extracted
-      return;
+      setToken(extractedToken); // ✅ set correct token from hash
+      return; // ✅ exit early
     }
   }
 
-  if (token) setToken(token); // ✅ Only set if we have it
+  if (storedToken) {
+    setToken(storedToken); // ✅ fallback to localStorage token
+  }
 }, []);
+
 
   console.log("Current token state:", token); // Debug: log the current token state
 
