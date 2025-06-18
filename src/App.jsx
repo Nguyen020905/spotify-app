@@ -7,6 +7,10 @@ const RESPONSE_TYPE = "token";
 const SCOPES = ["user-top-read"];
 const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 
+console.log("Environment variables:");
+console.log("VITE_CLIENT_ID:", import.meta.env.VITE_CLIENT_ID);
+console.log("VITE_REDIRECT_URI:", import.meta.env.VITE_REDIRECT_URI);
+
 function App() {
   const [token, setToken] = useState("");
   useEffect(() => {
