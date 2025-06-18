@@ -35,7 +35,7 @@ function App() {
   };
 
   return (
-    <div class="center-container">
+    <div className="center-container">
       <h1>Spotify App</h1>
 
       {!token ? (
