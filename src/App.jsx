@@ -43,9 +43,9 @@ function App() {
           className="btn"
           href={`${AUTH_ENDPOINT}?client_id=${
             import.meta.env.VITE_CLIENT_ID
-          }&redirect_uri=${REDIRECT_URI}&scope=${SCOPES.join(
-            "%20"
-          )}&response_type=${RESPONSE_TYPE}`}
+          }&redirect_uri=${encodeURIComponent(
+            REDIRECT_URI
+          )}&scope=${SCOPES.join("%20")}&response_type=${RESPONSE_TYPE}`}
         >
           Login to Spotify
         </a>
@@ -63,4 +63,3 @@ function App() {
 }
 
 export default App;
-
