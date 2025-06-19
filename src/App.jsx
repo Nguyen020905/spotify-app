@@ -1,48 +1,85 @@
-import React, { useEffect, useState } from "react";
-import TopArtist from "./TopArtist";
+// App.jsx
+import { useEffect, useState } from "react";
+import "./App.css";
+import TopArtist from "./TopArtist.jsx";
+const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
+const RESPONSE_TYPE = "token";
+const SCOPES = ["user-top-read"];
+const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
-const App = () => {
-  const [token, setToken] = useState(null);
+console.log("Environment variables:");
+console.log("VITE_CLIENT_ID:", import.meta.env.VITE_CLIENT_ID);
+console.log("VITE_REDIRECT_URI:", import.meta.env.VITE_REDIRECT_URI);
+console.log("Client ID:", CLIENT_ID);
 
-  // Call this when user clicks login
-  const authorize = () => {
-    const client_id = "f310e379912b4a998967c82421ea67f4";
-    const redirect_uri = "https://spotify-app-sandy-phi.vercel.app/";
-    const scopes = "user-top-read playlist-modify-public playlist-modify-private";
+function App() {
+  const [token, setToken] = useState("");
+  useEffect(() => {
+  const hash = window.location.hash;
+  let storedToken = window.localStorage.getItem("token");
 
-    let url = "https://accounts.spotify.com/authorize";
-    url += "?response_type=token";
-    url += "&client_id=" + encodeURIComponent(client_id);
-    url += "&scope=" + encodeURIComponent(scopes);
-    url += "&redirect_uri=" + encodeURIComponent(redirect_uri);
+  if (!storedToken && hash) {
+    const extractedToken = new URLSearchParams(hash.substring(1)).get("access_token");
+    if (extractedToken) {
+      window.location.hash = "";
+      window.localStorage.setItem("token", extractedToken);
+      setToken(extractedToken); // ✅ set correct token from hash
+      return; // ✅ exit early
+    }
+  }
 
-    window.location.href = url;
+  if (storedToken) {
+    setToken(storedToken); // ✅ fallback to localStorage token
+  }
+}, []);
+
+
+  console.log("Current token state:", token); // Debug: log the current token state
+
+  const logOut = () => {
+    setToken("");
+    window.localStorage.removeItem("token");
   };
 
-  // Parse access_token from URL or localStorage
-  useEffect(() => {
-    const hash = window.location.hash;
-    let _token = window.localStorage.getItem("token");
+  const checkLocalStorage = () => {
+    const storedToken = window.localStorage.getItem("token");
+    console.log("Current localStorage token:", storedToken);
+    alert(`Current localStorage token: ${storedToken || 'null'}`);
+  };
 
-    if (!_token && hash) {
-      _token = new URLSearchParams(hash.substring(1)).get("access_token");
-      window.location.hash = "";
-      window.localStorage.setItem("token", _token);
-    }
-
-    setToken(_token);
-  }, []);
+  const loginUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES.join("%20")}&response_type=${RESPONSE_TYPE}`.replace(/\s+/g, '');
+  
+  console.log("Login URL:", loginUrl); // Debug: see the actual URL being generated
 
   return (
-    <div className="App">
-      <h1>Spotify Stats</h1>
+    <div className="center-container">
+      <h1>Spotify App</h1>
+
       {!token ? (
-        <button onClick={authorize}>Login with Spotify</button>
+        <>
+          <a
+            className="btn"
+            href={loginUrl}
+          >
+            Login to Spotify
+          </a>
+          <button onClick={checkLocalStorage} style={{marginTop: '10px'}}>
+            Check localStorage
+          </button>
+        </>
       ) : (
-        <TopArtist token={token} />
+        <>
+          <button onClick={logOut} className="bnt">
+            Logout
+          </button>
+          <p>You are logged in!</p>
+          <TopArtist token={token} />
+          {console.log("Token being passed to TopArtist:", token)}
+        </>
       )}
     </div>
   );
-};
+}
 
 export default App;
