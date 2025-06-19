@@ -15,7 +15,7 @@ const generateRandomString = (length) => {
   return values.reduce((acc, x) => acc + possible[x % possible.length], "");
 };
 
-const codeVerifier = generateRandomString(64);
+const generateCodeVerifier = () => generateRandomString(64);
 
 const sha256 = async (plain) => {
   const encoder = new TextEncoder();
@@ -31,8 +31,8 @@ const base64encode = (input) => {
 };
 
 export const generateCodeChallenge = async (verifier) => {
-  const hashed = await sha256(codeVerifier);
-  const codeChallenge = base64encode(hashed);
+  const hashed = await sha256(verifier); // ✅ Use the passed-in verifier
+  return base64encode(hashed); // ✅ Return the result
 };
 
 const App = () => {
