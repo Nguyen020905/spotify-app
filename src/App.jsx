@@ -16,24 +16,26 @@ console.log("Client ID:", CLIENT_ID);
 function App() {
   const [token, setToken] = useState("");
   useEffect(() => {
-  const hash = window.location.hash;
-  let storedToken = window.localStorage.getItem("token");
+    const hash =
+      window.location
+        .hash; /* grab the access token from the URL  ex='http://localhost:5173/#access_token=ABC123&token_type=Bearer&expires_in=3600*/
+    let token =
+      window.localStorage.getItem(
+        "token"
+      ); /* check if we have the previous token already save in the local storage */
 
-  if (!storedToken && hash) {
-    const extractedToken = new URLSearchParams(hash.substring(1)).get("access_token");
-    if (extractedToken) {
+    if (!token && hash) {
+      token = new URLSearchParams(hash.substring(1)).get(
+        "access_token"
+      ); /* delte the # in the #access_token=ABC123&token_type=Bearer&expires_in=3600* and only get the acces_token */
       window.location.hash = "";
-      window.localStorage.setItem("token", extractedToken);
-      setToken(extractedToken); // ✅ set correct token from hash
-      return; // ✅ exit early
+      window.localStorage.setItem("token", token);
     }
-  }
 
-  if (storedToken) {
-    setToken(storedToken); // ✅ fallback to localStorage token
-  }
-}, []);
-
+    console.log("Token from localStorage:", token); // Debug: log the token
+    console.log("Hash from URL:", hash); // Debug: log the hash
+    setToken(token);
+  }, []);
 
   console.log("Current token state:", token); // Debug: log the current token state
 
