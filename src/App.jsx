@@ -17,18 +17,24 @@ const App = () => {
     const codeChallenge = await generateCodeChallenge(codeVerifier);
     localStorage.setItem("code_verifier", codeVerifier);
 
-    const authUrl = new URL(SPOTIFY_AUTHORIZE_ENDPOINT);
-    authUrl.search = new URLSearchParams({
+    const clientId = CLIENT_ID;
+    const redirectUri = REDIRECT_URI;
+    const scope = SCOPES.join(" ");
+
+    const params = {
       response_type: "code",
-      client_id: CLIENT_ID,
-      redirect_uri: REDIRECT_URI,
-      scope: SCOPES.join(" "),
+      client_id: clientId,
+      scope,
       code_challenge_method: "S256",
       code_challenge: codeChallenge,
+      redirect_uri: redirectUri,
       show_dialog: "true",
-    }).toString();
+    };
 
-    window.location.href = authUrl.toString();
+    // ✅ Build URL and redirect
+    window.location = `https://accounts.spotify.com/authorize?${new URLSearchParams(
+      params
+    )}`;
   };
   return (
     <div className="container">
