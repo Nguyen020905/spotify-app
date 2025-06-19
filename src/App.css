@@ -1,4 +1,9 @@
 .container {
+  text-align: center; /* Center child elements that are inline or inline-block */
+  margin-top: 50px; /* optional: spacing from the top */
+}
+
+.btn {
   display: inline-block;
   text-align: center;
   padding: 12px 24px;
@@ -13,7 +18,7 @@
   transition: background-color 0.3s ease;
 }
 
-.containe:hover {
+.btn:hover {
   background-color: #1ed760;
 }
 
