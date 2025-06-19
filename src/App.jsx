@@ -54,6 +54,22 @@ function App() {
   
   console.log("Login URL:", loginUrl); // Debug: see the actual URL being generated
 
+  const fetchTopArtists = async () => {
+    if (token) {
+      try {
+        const response = await fetch('https://api.spotify.com/v1/me/top/artists?limit=10', {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        });
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error fetching top artists:', error);
+      }
+    }
+  };
+
   return (
     <div className="center-container">
       <h1>Spotify App</h1>
@@ -78,6 +94,7 @@ function App() {
           <p>You are logged in!</p>
           <TopArtist token={token} />
           {console.log("Token being passed to TopArtist:", token)}
+          <button onClick={fetchTopArtists}>Fetch Top Artists</button>
         </>
       )}
     </div>
