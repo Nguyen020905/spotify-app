@@ -6,6 +6,16 @@ const REDIRECT_URI = "https://spotify-app-sandy-phi.vercel.app/";
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
 const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 const SCOPES = ["user-top-read"];
+/*https://spotify-app-sandy-phi.vercel.app/?code=AQBhfpLst91O7NMq2wEnVXJrLfhZ-EbvUdRlNsT7vr-f0h_YtJRXq9dF6hlS_96vbg0l92E1isl1tV_hX-A8Pl2zq2dw94ODLZlfwWVDvbn5Hj0byQ2b3FodTy_AUk3O2i0zN8Ejz_U2I4caaILvhtoI-iq_p8agtzz67aEhTnt6uzU8RjvJ6OCq7olh6cWQeiGPZ-dNM4f_fD3F69VbapE3Rr0385PQZKcC8ULrlk7_ZbsFrAtzTqhhusaj0c9eHISylcEyZdfhpUiaHI4N*/
+const getReturnParamsFromSpoityfAuth = (hash) => {
+  const queryString =
+    window.location.search; /*get the code of the author spotify URL */
+  const urlParams = new URLSearchParams(queryString);
+  return {
+    code: urlParams.get("code"),
+    error: urlParams.get("error"),
+  };
+};
 // src/pkce.js
 
 const generateRandomString = (length) => {
@@ -37,7 +47,37 @@ export const generateCodeChallenge = async (verifier) => {
 
 const App = () => {
   const [accessToken, setAccessToken] = useState(null);
+  useEffect(() => {
+    const { code } = getReturnParamsFromSpoityfAuth();
+    if (!code) return; /* return if no code are found*/
 
+    const fetchAccessToken = async () => {
+      const codeVerifier =
+        localStorage.getItem(
+          "code_verifier"
+        ); /* retrieve back the code verifier as part of the PKCE security */
+
+      const body = new URLSearchParams({
+        client_id: CLIENT_ID, // Identifies your app
+        grant_type: "authorization_code", // Tells Spotify what you're asking for
+        code, // The code you got from Spotify after login
+        redirect_uri: REDIRECT_URI, // Must exactly match what was used in login
+        code_verifier: codeVerifier, // Proves you are the same client that initiated login
+      });
+      /* sends an HTTP POST request to Spotify’s token endpoint*/
+      const response = await fetch(TOKEN_ENDPOINT, {
+        method: "POST" /*sending data to spotify*/,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: body.toString(), // this is the form data from URLSearchParams
+      });
+
+      const data = await response.json();
+      setAccessToken(data.access_token); /*update the accessToken*/
+    };
+    fetchAccessToken();
+  });
   // Step 1: Handle login button click
   const handleLogin = async () => {
     const codeVerifier = generateCodeVerifier();
@@ -65,8 +105,15 @@ const App = () => {
   };
   return (
     <div className="container">
-      <h1>Hi</h1>
-      <button onClick={handleLogin}>Login to Spotify</button>
+      <h1></h1>
+      <button className="btn" onClick={handleLogin}>
+        Login to Spotify
+      </button>
+      {accessToken ? (
+        <p>✅ Logged in! Access token: {accessToken}</p>
+      ) : (
+        <p>❌ Not logged in yet.</p>
+      )}
     </div>
   );
 };
