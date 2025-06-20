@@ -49,37 +49,44 @@ const App = () => {
   const [accessToken, setAccessToken] = useState(null);
   useEffect(() => {
     const { code } = getReturnParamsFromSpoityfAuth();
-      console.log("code:", code);
-  console.log("verifier:", localStorage.getItem("code_verifier"));
     if (!code) return; /* return if no code are found*/
 
     const fetchAccessToken = async () => {
-      const codeVerifier =
-        localStorage.getItem(
-          "code_verifier"
-        ); /* retrieve back the code verifier as part of the PKCE security */
+      const codeVerifier = localStorage.getItem("code_verifier");
 
       const body = new URLSearchParams({
-        client_id: CLIENT_ID, // Identifies your app
-        grant_type: "authorization_code", // Tells Spotify what you're asking for
-        code, // The code you got from Spotify after login
-        redirect_uri: REDIRECT_URI, // Must exactly match what was used in login
-        code_verifier: codeVerifier, // Proves you are the same client that initiated login
-      }, []);
-      /* sends an HTTP POST request to Spotify’s token endpoint*/
-      const response = await fetch(TOKEN_ENDPOINT, {
-        method: "POST" /*sending data to spotify*/,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: body.toString(), // this is the form data from URLSearchParams
+        client_id: CLIENT_ID,
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: REDIRECT_URI,
+        code_verifier: codeVerifier,
       });
 
-      const data = await response.json();
-      setAccessToken(data.access_token); /*update the accessToken*/
+      try {
+        const response = await fetch(TOKEN_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: body.toString(),
+        });
+
+        const data = await response.json();
+        console.log("🔁 Spotify Token Response:", data); // ✅ See response in console
+
+        if (data.access_token) {
+          setAccessToken(data.access_token);
+          window.history.replaceState({}, document.title, "/"); // ✅ Remove code from URL
+        } else {
+          console.error("❌ Token Error:", data); // ❗ Shows what's wrong (like invalid_grant)
+        }
+      } catch (err) {
+        console.error("❌ Network or server error:", err);
+      }
     };
+
     fetchAccessToken();
-  });
+  }, []);
   // Step 1: Handle login button click
   const handleLogin = async () => {
     const codeVerifier = generateCodeVerifier();
