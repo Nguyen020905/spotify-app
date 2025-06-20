@@ -65,7 +65,7 @@ const App = () => {
         code, // The code you got from Spotify after login
         redirect_uri: REDIRECT_URI, // Must exactly match what was used in login
         code_verifier: codeVerifier, // Proves you are the same client that initiated login
-      });
+      }, []);
       /* sends an HTTP POST request to Spotify’s token endpoint*/
       const response = await fetch(TOKEN_ENDPOINT, {
         method: "POST" /*sending data to spotify*/,
