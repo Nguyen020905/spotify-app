@@ -78,7 +78,7 @@ const App = () => {
           setAccessToken(data.access_token);
           window.history.replaceState({}, document.title, "/"); // ✅ Remove code from URL
         } else {
-          console.error("❌ Token Error:", data); // ❗ Shows what's wrong (like invalid_grant)
+          console.error("❌ Token Error:", JSON.stringify(data, null, 2));
         }
       } catch (err) {
         console.error("❌ Network or server error:", err);
