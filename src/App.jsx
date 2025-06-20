@@ -49,6 +49,8 @@ const App = () => {
   const [accessToken, setAccessToken] = useState(null);
   useEffect(() => {
     const { code } = getReturnParamsFromSpoityfAuth();
+      console.log("code:", code);
+  console.log("verifier:", localStorage.getItem("code_verifier"));
     if (!code) return; /* return if no code are found*/
 
     const fetchAccessToken = async () => {
@@ -113,8 +115,6 @@ const App = () => {
         <p>✅ Logged in! Access token: {accessToken}</p>
       ) : (
         <p>❌ Not logged in yet.</p>
-      console.log("code:", new URLSearchParams(window.location.search).get("code"));
-console.log("verifier:", localStorage.getItem("code_verifier"));
       )}
     </div>
   );
