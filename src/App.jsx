@@ -113,6 +113,8 @@ const App = () => {
         <p>✅ Logged in! Access token: {accessToken}</p>
       ) : (
         <p>❌ Not logged in yet.</p>
+      console.log("code:", new URLSearchParams(window.location.search).get("code"));
+console.log("verifier:", localStorage.getItem("code_verifier"));
       )}
     </div>
   );
