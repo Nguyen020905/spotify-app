@@ -158,16 +158,7 @@ const App = () => {
           <h2>Your Top 10 Artists:</h2>
           <ul>
             {topArtists.map((artist) => (
-              <li key={artist.id}>
-                <img src={artist.images[0]?.url} alt={artist.name} width="50" />
-                <a
-                  href={artist.external_urls.spotify}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {artist.name}
-                </a>
-              </li>
+              <li key={artist.id}>{artist.name}</li>
             ))}
           </ul>
         </>
