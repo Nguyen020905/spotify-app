@@ -7,7 +7,7 @@ const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
 const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 const SCOPES = ["user-top-read"];
 
-// Extract code or error from URL after redirect
+// Extract code from redirect URL
 const getReturnParamsFromSpotifyAuth = () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -17,7 +17,7 @@ const getReturnParamsFromSpotifyAuth = () => {
   };
 };
 
-// PKCE Helpers
+// PKCE helpers
 const generateRandomString = (length) => {
   const possible =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -49,15 +49,13 @@ const App = () => {
   const [accessToken, setAccessToken] = useState(null);
   const [topArtists, setTopArtists] = useState([]);
 
-  // Step 1: Handle token fetching
+  // Step 1: Handle token retrieval on page load
   useEffect(() => {
     const { code } = getReturnParamsFromSpotifyAuth();
 
     if (!code) {
       const savedToken = localStorage.getItem("access_token");
-      if (savedToken) {
-        setAccessToken(savedToken);
-      }
+      if (savedToken) setAccessToken(savedToken);
       return;
     }
 
@@ -99,7 +97,7 @@ const App = () => {
     fetchAccessToken();
   }, []);
 
-  // Step 2: Fetch top artists
+  // Step 2: Fetch top 10 artists
   useEffect(() => {
     if (!accessToken) return;
 
@@ -124,7 +122,7 @@ const App = () => {
     fetchTopArtists();
   }, [accessToken]);
 
-  // Step 3: Login
+  // Step 3: Handle login
   const handleLogin = async () => {
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -168,28 +166,16 @@ const App = () => {
             Logout
           </button>
           <h2>Your Top 10 Artists:</h2>
-          <ul style={{ listStyle: "none", padding: 0 }}>
+          <ul className="list_artist">
             {topArtists.length > 0 ? (
               topArtists.map((artist) => (
-                <li
-                  key={artist.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "12px",
-                  }}
-                >
+                <li key={artist.id} className="artist_item">
                   <img
                     src={artist.images[0]?.url}
                     alt={artist.name}
-                    width="80"
-                    style={{
-                      borderRadius: "50%",
-                      marginRight: "12px",
-                      objectFit: "cover",
-                    }}
+                    className="artist_image"
                   />
-                  <span>{artist.name}</span>
+                  <span className="artist_name">{artist.name}</span>
                 </li>
               ))
             ) : (
