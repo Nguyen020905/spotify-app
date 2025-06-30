@@ -49,7 +49,15 @@ const App = () => {
   const [accessToken, setAccessToken] = useState(null);
   useEffect(() => {
     const { code } = getReturnParamsFromSpoityfAuth();
-    if (!code) return; /* return if no code are found*/
+
+    if (!code) {
+      // ✅ Load token from localStorage if no code is present
+      const savedToken = localStorage.getItem("access_token");
+      if (savedToken) {
+        setAccessToken(savedToken);
+      }
+      return;
+    }
 
     const fetchAccessToken = async () => {
       const codeVerifier = localStorage.getItem("code_verifier");
@@ -72,13 +80,14 @@ const App = () => {
         });
 
         const data = await response.json();
-        console.log("🔁 Spotify Token Response:", data); // ✅ See response in console
+        console.log("🔁 Spotify Token Response:", data);
 
         if (data.access_token) {
           setAccessToken(data.access_token);
-          window.history.replaceState({}, document.title, "/"); // ✅ Remove code from URL
+          localStorage.setItem("access_token", data.access_token); // ✅ Store token
+          window.history.replaceState({}, document.title, "/"); // ✅ Clean up URL
         } else {
-          console.error("❌ Token Error:", data); // ❗ Shows what's wrong (like invalid_grant)
+          console.error("❌ Token Error:", data);
         }
       } catch (err) {
         console.error("❌ Network or server error:", err);
@@ -87,7 +96,6 @@ const App = () => {
 
     fetchAccessToken();
   }, []);
-
   // ✅ Step 2: Use token to fetch top 10 artists
   useEffect(() => {
     if (!accessToken) return;
