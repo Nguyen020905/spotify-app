@@ -6,18 +6,18 @@ const REDIRECT_URI = "https://spotify-app-sandy-phi.vercel.app/";
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
 const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 const SCOPES = ["user-top-read"];
-
-// Extract code or error from the URL
-const getReturnParamsFromSpoityfAuth = () => {
-  const queryString = window.location.search;
+/*https://spotify-app-sandy-phi.vercel.app/?code=AQBhfpLst91O7NMq2wEnVXJrLfhZ-EbvUdRlNsT7vr-f0h_YtJRXq9dF6hlS_96vbg0l92E1isl1tV_hX-A8Pl2zq2dw94ODLZlfwWVDvbn5Hj0byQ2b3FodTy_AUk3O2i0zN8Ejz_U2I4caaILvhtoI-iq_p8agtzz67aEhTnt6uzU8RjvJ6OCq7olh6cWQeiGPZ-dNM4f_fD3F69VbapE3Rr0385PQZKcC8ULrlk7_ZbsFrAtzTqhhusaj0c9eHISylcEyZdfhpUiaHI4N*/
+const getReturnParamsFromSpoityfAuth = (hash) => {
+  const queryString =
+    window.location.search; /*get the code of the author spotify URL */
   const urlParams = new URLSearchParams(queryString);
   return {
     code: urlParams.get("code"),
     error: urlParams.get("error"),
   };
 };
+// src/pkce.js
 
-// PKCE helper functions
 const generateRandomString = (length) => {
   const possible =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -40,21 +40,18 @@ const base64encode = (input) => {
     .replace(/\//g, "_");
 };
 
-const generateCodeChallenge = async (verifier) => {
-  const hashed = await sha256(verifier);
-  return base64encode(hashed);
+export const generateCodeChallenge = async (verifier) => {
+  const hashed = await sha256(verifier); // ✅ Use the passed-in verifier
+  return base64encode(hashed); // ✅ Return the result
 };
 
 const App = () => {
   const [accessToken, setAccessToken] = useState(null);
-  const [topArtists, setTopArtists] = useState([]);
-
-  // Handle token retrieval
   useEffect(() => {
     const { code } = getReturnParamsFromSpoityfAuth();
 
     if (!code) {
-      // Check localStorage for previously saved access token
+      // ✅ Load token from localStorage if no code is present
       const savedToken = localStorage.getItem("access_token");
       if (savedToken) {
         setAccessToken(savedToken);
@@ -87,8 +84,8 @@ const App = () => {
 
         if (data.access_token) {
           setAccessToken(data.access_token);
-          localStorage.setItem("access_token", data.access_token); // Save token
-          window.history.replaceState({}, document.title, "/"); // Remove code from URL
+          localStorage.setItem("access_token", data.access_token); // ✅ Store token
+          window.history.replaceState({}, document.title, "/"); // ✅ Clean up URL
         } else {
           console.error("❌ Token Error:", data);
         }
@@ -99,8 +96,7 @@ const App = () => {
 
     fetchAccessToken();
   }, []);
-
-  // Fetch top artists after token is set
+  // ✅ Step 2: Use token to fetch top 10 artists
   useEffect(() => {
     if (!accessToken) return;
 
@@ -116,7 +112,7 @@ const App = () => {
         );
 
         const data = await response.json();
-        setTopArtists(data.items || []);
+        setTopArtists(data.items);
       } catch (error) {
         console.error("❌ Failed to fetch top artists:", error);
       }
@@ -125,61 +121,58 @@ const App = () => {
     fetchTopArtists();
   }, [accessToken]);
 
-  // Handle Spotify login
+  // Step 1: Handle login button click
   const handleLogin = async () => {
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = await generateCodeChallenge(codeVerifier);
     localStorage.setItem("code_verifier", codeVerifier);
 
+    const clientId = CLIENT_ID;
+    const redirectUri = REDIRECT_URI;
+    const scope = SCOPES.join(" ");
+
     const params = {
       response_type: "code",
-      client_id: CLIENT_ID,
-      scope: SCOPES.join(" "),
+      client_id: clientId,
+      scope,
       code_challenge_method: "S256",
       code_challenge: codeChallenge,
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: redirectUri,
       show_dialog: "true",
     };
 
-    // Redirect to Spotify login
-    window.location = `${SPOTIFY_AUTHORIZE_ENDPOINT}?${new URLSearchParams(
+    // ✅ Build URL and redirect
+    window.location = `https://accounts.spotify.com/authorize?${new URLSearchParams(
       params
     )}`;
   };
-
-  // Logout handler
-  const handleLogout = () => {
-    setAccessToken(null);
-    setTopArtists([]);
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("code_verifier");
-  };
-
   return (
     <div className="container">
-      <h1>Spotify Top Artists</h1>
-
-      {!accessToken ? (
-        <button className="btn" onClick={handleLogin}>
-          Login to Spotify
-        </button>
-      ) : (
+      <h1></h1>
+      <button className="btn" onClick={handleLogin}>
+        Login to Spotify
+      </button>
+      {accessToken ? (
         <>
-          <p>✅ Logged in!</p>
-          <button className="btn" onClick={handleLogout}>
-            Logout
-          </button>
+          <p>✅ Logged in! </p>
           <h2>Your Top 10 Artists:</h2>
           <ul>
-            {topArtists.length > 0 ? (
-              topArtists.map((artist) => (
-                <li key={artist.id}>{artist.name}</li>
-              ))
-            ) : (
-              <p>Loading artists...</p>
-            )}
+            {topArtists.map((artist) => (
+              <li key={artist.id}>
+                <img src={artist.images[0]?.url} alt={artist.name} width="50" />
+                <a
+                  href={artist.external_urls.spotify}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {artist.name}
+                </a>
+              </li>
+            ))}
           </ul>
         </>
+      ) : (
+        <p>❌ Not logged in yet.</p>
       )}
     </div>
   );
