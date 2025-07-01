@@ -38,5 +38,5 @@ A React web app that authenticates users with Spotify using **OAuth 2.0 PKCE flo
 
 ---
 
-## 📁 Project Structure
+
 
