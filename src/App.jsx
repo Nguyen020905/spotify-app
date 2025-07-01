@@ -58,10 +58,10 @@ const App = () => {
             <option value="long_term">All Time</option>
           </select>
 
-            <h2>Your Top 10 Artists:</h2>
-            <  <div key={timeRange}>
-              <ArtistList artists={topArtists} />
-              </div>
+          <h2>Your Top 10 Artists:</h2>
+          <div key={timeRange}>
+            <ArtistList artists={topArtists} />
+          </div>
         </>
       )}
     </div>
