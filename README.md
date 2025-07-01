@@ -1,13 +1,42 @@
-# React + Vite
+# 🎵 Spotify Top Artists App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React web app that authenticates users with Spotify using **OAuth 2.0 PKCE flow**, then displays their **top 10 most-listened-to artists** with clean, animated UI.
 
-Currently, two official plugins are available:
+## 🚀 Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 [spotify-app-sandy-phi.vercel.app](https://spotify-app-sandy-phi.vercel.app)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-"# spotify-app" 
+## 🔑 Features
+
+- 🔐 Secure Spotify login via OAuth 2.0 with PKCE (no secret required)
+- 🎧 Fetches and displays user's top 10 artists using the Spotify Web API
+- 🎨 Smooth animations with [Animate.css](https://animate.style)
+- ✨ Responsive and modular React component structure
+- 🚀 Deployed with Vercel for fast live hosting
+
+---
+
+## 🛠️ Tech Stack
+
+- **React**
+- **Spotify Web API**
+- **OAuth 2.0 (PKCE)**
+- **Animate.css**
+- **Vercel**
+
+---
+
+## 🧠 What I Learned
+
+- Implementing OAuth authentication securely with PKCE
+- Handling asynchronous API requests and access tokens
+- Structuring React apps using reusable components and hooks
+- Enhancing UI/UX with animation and conditional rendering
+- Deploying and maintaining a live project on Vercel
+
+---
+
+## 📁 Project Structure
+
