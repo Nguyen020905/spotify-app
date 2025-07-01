@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import useSpotifyAuth from "./useSpotifyAuth";
 import ArtistList from "./ArtistList";
+import "animate.css";
 
 const App = () => {
   const { accessToken, handleLogin, handleLogout } = useSpotifyAuth();
