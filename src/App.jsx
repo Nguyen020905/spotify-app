@@ -4,11 +4,10 @@ import useSpotifyAuth from "./useSpotifyAuth";
 import ArtistList from "./ArtistList";
 import "animate.css";
 
-const [timeRange, setTimeRange] = useState("short-term");
-
 const App = () => {
   const { accessToken, handleLogin, handleLogout } = useSpotifyAuth();
   const [topArtists, setTopArtists] = useState([]);
+  const [timeRange, setTimeRange] = useState("short_term"); // ✅ moved inside
 
   useEffect(() => {
     if (!accessToken) return;
@@ -16,7 +15,7 @@ const App = () => {
     const fetchTopArtists = async () => {
       try {
         const response = await fetch(
-          "https://api.spotify.com/v1/me/top/artists?limit=10&time_range=${timeRange}",
+          `https://api.spotify.com/v1/me/top/artists?limit=10&time_range=${timeRange}`, // ✅ backticks
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -32,7 +31,7 @@ const App = () => {
     };
 
     fetchTopArtists();
-  }, [accessToken]);
+  }, [accessToken, timeRange]); // ✅ watch timeRange for changes
 
   return (
     <div className="container">
@@ -47,7 +46,8 @@ const App = () => {
           <button className="btn" onClick={handleLogout}>
             Logout
           </button>
-          /*drop down for the time range */
+
+          {/* ✅ Time Range Dropdown */}
           <select
             className="btn"
             value={timeRange}
@@ -57,6 +57,7 @@ const App = () => {
             <option value="medium_term">Last 6 Months</option>
             <option value="long_term">All Time</option>
           </select>
+
           <h2>Your Top 10 Artists:</h2>
           <ArtistList artists={topArtists} />
         </>
