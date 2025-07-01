@@ -7,7 +7,7 @@ import "animate.css";
 const App = () => {
   const { accessToken, handleLogin, handleLogout } = useSpotifyAuth();
   const [topArtists, setTopArtists] = useState([]);
-  const [timeRange, setTimeRange] = useState("short_term"); // ✅ moved inside
+  const [timeRange, setTimeRange] = useState("short_term"); // ✅ Spotify-compatible value
 
   useEffect(() => {
     if (!accessToken) return;
@@ -15,7 +15,7 @@ const App = () => {
     const fetchTopArtists = async () => {
       try {
         const response = await fetch(
-          `https://api.spotify.com/v1/me/top/artists?limit=10&time_range=${timeRange}`, // ✅ backticks
+          `https://api.spotify.com/v1/me/top/artists?limit=10&time_range=${timeRange}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -23,15 +23,22 @@ const App = () => {
           }
         );
 
+        if (!response.ok) {
+          const text = await response.text(); // 🧠 Use .text() instead of .json() for failed responses
+          console.error(`❌ API ${response.status} error:`, text);
+          return;
+        }
+
         const data = await response.json();
+        console.log("🎯 Top artists response:", data);
         setTopArtists(data.items || []);
       } catch (error) {
-        console.error("❌ Failed to fetch top artists:", error);
+        console.error("❌ Network error:", error);
       }
     };
 
     fetchTopArtists();
-  }, [accessToken, timeRange]); // ✅ watch timeRange for changes
+  }, [accessToken, timeRange]); // ✅ re-fetch when timeRange changes
 
   return (
     <div className="container">
@@ -47,7 +54,7 @@ const App = () => {
             Logout
           </button>
 
-          {/* ✅ Time Range Dropdown */}
+          {/* ✅ Dropdown to choose time range */}
           <select
             className="btn"
             value={timeRange}
@@ -59,6 +66,8 @@ const App = () => {
           </select>
 
           <h2>Your Top 10 Artists:</h2>
+
+          {/* ✅ Re-render ArtistList when timeRange changes */}
           <div key={timeRange}>
             <ArtistList artists={topArtists} />
           </div>
