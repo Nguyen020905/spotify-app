@@ -2,11 +2,7 @@
 
 A React web app that authenticates users with Spotify using **OAuth 2.0 PKCE flow**, then displays their **top 10 most-listened-to artists** with clean, animated UI.
 
-## 🚀 Live Demo
 
-🔗 [spotify-app-sandy-phi.vercel.app](https://spotify-app-sandy-phi.vercel.app)
-
----
 
 ## 🔑 Features
 
